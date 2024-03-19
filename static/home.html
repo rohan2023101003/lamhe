@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Jost', sans-serif;
+            background-color: whitesmoke;
+          }
+          
+          *{
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+            list-style: none;
+            box-sizing: border-box;
+          }
+          nav{
+            background: #0082e6;
+            height: 80px;
+            width: 100%;
+            z-index: 3;
+            position: relative;
+          }
+          label.logo{
+            color: white;
+            font-size: 35px;
+            line-height: 80px;
+            padding: 0 100px;
+            font-weight: bold;    
+          }
+          nav ul{
+            float: right;
+            margin-right: 20px;
+          }
+          nav ul li{
+            display: inline-block;
+            line-height: 80px;
+            margin: 0 5px;
+          }
+          nav ul li a{
+            color: white;
+            font-size: 17px;
+            padding: 7px 13px;
+            border-radius: 3px;
+            text-transform: uppercase;
+          }
+          a.active,a:hover{
+            background: #1b9bff;
+            transition: .5s;
+          }
+          /* button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          }  */
+          .checkbtn{
+            font-size: 30px;
+            color: white;
+            float: right;
+            line-height: 80px;
+            margin-right: 40px;
+            cursor: pointer;
+            display: none;    
+          }
+          #check{
+            display: none;
+          }
+          @media (max-width: 952px){
+            label.logo{
+                font-size: 30px;
+                padding-left: 50px;
+            }
+            nav ul li a{
+                font-size: 16px;
+            }
+          }
+          @media (max-width: 858px){
+            .checkbtn{
+                display: block;
+            }
+            ul{
+                position: fixed;
+                width: 100%;
+                height: 100vh;
+                background: #2c3e50;
+                top: 80px;
+                left: -100%;
+                text-align: center;
+                transition: all .5s;
+          }
+          nav ul li{
+            display: block;
+            margin: 50px 0;
+            line-height: 30px;
+          }
+            nav ul li a{
+                font-size: 20px;
+            }
+            a:hover,a.active{
+                background: none;
+                color: #0082e6;
+            }
+            #check:checked ~ ul{
+                left: 0;
+            }
+          }
+          
+          
+          button {
+            padding: 10px;
+            width: 70px;
+            color: white;
+            font-family: inherit;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid black;
+            background-color: black;
+            box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+            font-size: 0.9rem;
+          }
+          
+          .app {
+            max-width: 1224px;
+            width: 92%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+          
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            padding-bottom: 10px;
+          }
+          
+          .header h2 {
+            min-width: fit-content;
+          }
+          
+          .server-message {
+            width: 100%;
+            padding: 16px;
+            border-radius: 5px;
+          }
+          
+          .input-div {
+            width: 100%;
+            height: 200px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            /* border: 2px solid black; */
+            background-color: white;
+            position: relative;
+          }
+          
+          .input-div .browse {
+            color: black;
+            font-weight: bold;
+          }
+          
+          .file {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+            z-index: 2;
+            cursor: pointer;
+          }
+          
+          .saved-div,
+            .queued-div ,
+            .selected-images-div,
+            .server-div{
+              width: 100%;
+              min-height: 150px;
+              display: flex;
+              justify-content: flex-start;
+              flex-wrap: wrap;
+              gap: 15px;
+              position: relative;
+               border-radius: 5px;
+              /* border: 2px dotted black; */ 
+              background-color: white;
+            }
+            
+            .saved-div .image,
+            .queued-div .image,
+            .selected-images-div .image ,
+            .server-div .image{
+              height: 150px;
+              border-radius: 5px;
+              box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+              overflow: hidden;
+              position: relative;
+            }
+            
+            .saved-div .image:nth-child(4n),
+            .queued-div .image:nth-child(4n) ,
+            .selected-images-div:nth-child(4n),
+            .server-div .image:nth-child(4n){
+              margin-right: 0;
+            }
+            
+            .saved-div .image img,
+            .queued-div .image img ,
+            .selected-images-div .image img,
+            .server-div .image img{
+              height: 100%;
+              width: 100%;
+            }
+            
+            .saved-div .image span,
+            .queued-div .image span,
+            .selected-images-div  .image span,
+            .server-div .image span{
+              position: absolute;
+              top: -4px;
+              right: 4px;
+              cursor: pointer;
+              font-size: 22px;
+              color: white;
+            }
+            
+            .saved-div .image span:hover,
+            .queued-div .image span:hover ,
+            .selected-images-div .image span:hover,
+            .server-div .image span:hover{
+              opacity: 0.8;
+            }
+            
+            .saved-div .span--hidden,
+            .queued-div .span--hidden,
+            .selected-images-div .span--hidden,
+            .server-div .span--hidden{
+              visibility: hidden;
+            }
+            .image {
+              position: relative;
+              display: inline-block;
+              margin-top: 10px;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              margin-left: 10px;
+            }
+            
+            .index {
+              position: relative;
+              left: 5px;
+              margin-top: 10px;
+              width: 30px;
+              height: 30px; 
+              border-radius: 50%;
+              background-color:black;
+              color: white;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .index:hover{
+              background-color:grey;
+            }
+            
+            .delete-icon {
+              position: relative;
+               right: 0;
+              top: 0;
+              margin-top: 10px;
+              height: 20px;
+              width: 20px;
+              border-radius: 50%;
+              background-color: red;
+              color: white;
+              padding: 5px;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .delete-icon:hover{
+              background-color:grey;
+            }
+            .create_vid{
+              width: fit-content;background-color:#0082e6; color:black;font-size:20px;
+              transition: font-size 0.5s ease-in-out; 
+            }
+            .create_vid:hover{
+              color: white;
+            }
+            .anonymus{
+              display: flex;
+              align-items: center;
+              justify-content: space-evenly;
+            }
+            .container {
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 20px;
+          }
+          h1 {
+              text-align: center;
+              margin-bottom: 20px;
+          }
+          ul {
+              list-style-type: none;
+              padding: 0;
+          }
+          li {
+              margin-bottom: 10px;
+          }
+          audio {
+              width: 100%;
+          }
+          .audio-container {
+            cursor: pointer;
+            padding: 10px;
+          }
+          
+          .audio-container:hover {
+            background-color: #f0f0f0;
+          }
+          
+          .audio-container.selected {
+            background-color: #cce5ff;
+          }
+             
+    </style>
+</head>
+<body>
+    <div class="bar">
+        <nav>
+            <input type="checkbox" id="check">
+            <label for="check" class="checkbtn">
+                <i class="fas fa-bars"></i>
+            </label>
+            <label class="logo">Lamhe</label>
+            <ul>
+                <!-- <li><a href="#" class="active">Upload images</a> </li>
+                <li><a href="video.html">Create a Video</a> </li> -->
+                <li><a href="login.html">Log Out</a> </li>
+
+            </ul>
+        </nav>
+
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    </div>
+    <main class="app">
+        <div class="header">
+            <h2>Upload Image</h2>
+        </div>
+          <div class="input-div">
+            <p>Drag & Drop images here or<span class="browse">Browse</span></p>
+            <input type="file" class="file" multiple="multiple" accept="image/png,image/jpeg,img/jpg">
+        </div>
+        <div id="errorMessage" style="color: red; display: none;">Error: Image already uploaded!</div>
+
+        <div class="header">
+            <h3>Uploaded Images</h3>
+        </div>
+        <div class="queued-div"></div>
+        </div>
+        <button class="create_vid" onclick="refreshPage()">Upload</button>
+        <div id="uploadedMessage"  style="display:none;">Uploading Images to Server</div>
+        <div class="header">
+          <h3>Uploaded To Server</h3>
+      </div>
+      <div class="server-div" onclick="handleImageSelection(event)"></div>
+    
+        <div class="selected-images">
+            <h3>Selected Images</h3>
+            <br>
+            <div class="selected-images-div"></div>
+            <br>
+        </div>
+        <div id="image-container"></div>
+      
+        <div class="container">
+          <h1>Select an Audio File</h1>
+          <ul id="audio-list"></ul>
+      </div>
+    
+        <div class="anonymus">
+        <!-- <div><button  class="create_vid" onclick="clearSelectedImages()">Clear Selected Images</button></div> -->
+        <button onclick="fetchVideo()">Create Video</button>
+        <div id="video-container"></div>
+      </div>
+    </main>
+    <script>
+    let queuedImagesArray = [];
+    const selectedImagesArray = [];
+    const queuedDiv = document.querySelector(".queued-div");
+    const input = document.querySelector(".input-div input");
+    const inputDiv = document.querySelector(".input-div");
+    const selectedImagesDiv = document.querySelector(".selected-images-div");
+    const errorMessage = document.getElementById("errorMessage");
+    input.addEventListener("change", handleFileSelection);
+    inputDiv.addEventListener("drop", handleFileDrop);
+    
+    let imagesArray = [];
+
+    async function fetchImages() {
+      try {
+          
+          const response = await fetch('/get_uploaded_images');
+          const data = await response.json();
+          const imagesPromises = data.images.map(async imageName => {
+              const response = await fetch(`/uploads/${imageName}`);
+              const blob = await response.blob();
+              return blob;
+          });
+          imagesArray = await Promise.all(imagesPromises);
+          displayImages(imagesArray);
+          console.log(imagesArray);
+      } catch (error) {
+          console.error('Error fetching images:', error);
+      }
+  }
+  function refreshPage() {
+    uploadedMessage.style.display = "block";
+    setTimeout(() => {
+      window.location.reload();
+     }, 500); 
+  } 
+  fetchImages();
+  window.addEventListener('load', fetchImages);
+  function displayImages(imagesData) {
+      const imageContainer = document.querySelector('.server-div');
+      let imagesHTML = '';
+      imagesData.forEach((imageData, index) => {
+          const imageUrl = URL.createObjectURL(imageData);
+          imagesHTML += `
+              <div class="image" data-index="${index}">
+                  <span class="index">${index + 1}</span>
+                  <img src="${imageUrl}" alt="Image ${index + 1}">
+              </div>
+          `;
+      });
+      imageContainer.innerHTML = imagesHTML;
+  }
+
+   function handleFileSelection() {
+    const files = input.files;
+    let isError = false;
+    console.log(queuedImagesArray)
+    for (let i = 0; i < files.length; i++) {
+        if (queuedImagesArray.find(image => image.name === files[i].name)) {
+            isError = true;
+            break;
+        }
+    }
+    if (isError) {
+        errorMessage.style.display = "block";
+    } else {
+        errorMessage.style.display = "none";
+        for (let i = 0; i < files.length; i++) {
+            queuedImagesArray.push(files[i]);
+        }
+    }
+    displayQueuedImages();
+    uploadImagesToFlask(queuedImagesArray);
+    console.log(queuedImagesArray)
+}
+function handleFileDrop(e) {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    let isError = false;
+    for (let i = 0; i < files.length; i++) {
+        if (queuedImagesArray.find(image => image.name === files[i].name)) {
+            isError = true;
+            break;
+        }
+    }
+    if (isError) {
+        errorMessage.style.display = "block";
+    } else {
+        errorMessage.style.display = "none";
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type.includes("image") && !queuedImagesArray.find(image => image.name === files[i].name)) {
+                queuedImagesArray.push(files[i]);
+            }
+        }
+        
+    }
+    displayQueuedImages();
+   
+    uploadImagesToFlask(queuedImagesArray);
+   
+}
+
+    function uploadImagesToFlask(images) {
+      const formData = new FormData();
+      images.forEach(image => {
+          formData.append('file', image);
+      });
+      console.log(images);
+      fetch('/upload_images', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => {
+              if (response.ok) {
+                  console.log('Images uploaded successfully');
+              } else {
+                  console.error('Failed to upload images');
+              }
+          })
+          .catch(error => console.error('Error:', error));
+  }
+ 
+function handleImageSelection(event) {
+  const image = event.target.closest('.image');
+  if (image) {
+      const index = image.dataset.index;
+      console.log(queuedImagesArray);
+      const selectedImage = imagesArray[index];
+      selectedImagesArray.push(selectedImage); 
+      displaySelectedImages(selectedImagesArray);
+      uploadselectedImagesToFlask(selectedImagesArray)
+      console.log(selectedImagesArray);
+  }
+}
+
+
+function displaySelectedImages(selectedImagesArray) {
+  console.log(selectedImagesArray);
+
+  // Check if selectedImagesArray is undefined or null
+  if (!selectedImagesArray || selectedImagesArray.length === 0) {
+  selectedImagesDiv.innerHTML = "";
+
+    console.error("Selected images array is undefined or empty.");
+    return;
+  }
+
+  let images = "";
+  selectedImagesArray.forEach((image, index) => {
+    images += `<div class="image" data-index="${index}">
+        <span class="index">${index + 1}</span>
+        <img src="${URL.createObjectURL(image)}" alt="image">
+    </div>`;
+  });
+  selectedImagesDiv.innerHTML = images;
+}
+
+function uploadselectedImagesToFlask(selectedImagesArray) {
+  if (selectedImagesArray.length === 0) {
+      console.error('No images selected');
+      return;
+  }
+
+  const formData = new FormData();
+  selectedImagesArray.forEach((image, index) => {
+      // Convert Blob to File
+      const file = new File([image], `image${index + 1}.png`, { type: 'image/png' });
+      formData.append('file', file);
+  });
+
+  fetch('/upload_selected_images', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => {
+      if (response.ok) {
+          console.log('Images uploaded successfully');
+      } else {
+          console.error('Failed to upload images');
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+
+
+  function displayQueuedImages() {
+    let images = "";
+    console.log(queuedImagesArray);
+    queuedImagesArray.forEach((image, index) => {
+        images += `<div class="image" data-index="${index}">
+            <span class="index"  >${index + 1}</span>
+            <img src="${URL.createObjectURL(image)}" alt="image"> 
+        </div>`;
+    });
+    queuedDiv.innerHTML = images;
+} 
+
+   // Function to handle the response from the Flask route
+   function handleVideoCreationResponse(response) {
+    if (response.video_url) {
+        // Video URL is present, display the message and the video
+        alert(response.message);
+        window.refreshPage
+        displayVideo(response.video_url);
+    } else {
+        // Video URL is not present, handle error if needed
+        console.error("Video URL not found in the response.");
+    }
+}
+
+// Function to fetch the video from the Flask route
+function fetchVideo() {
+    fetch('/video')
+    .then(response => response.json())
+    .then(data => handleVideoCreationResponse(data))
+    .catch(error => console.error("Error fetching video:", error));
+}
+
+// Function to display the video on the page
+function displayVideo(videoUrl) {
+  // Remove any existing video element from the container
+  clearSelectedImages();
+  const existingVideoElement = document.getElementById('video-container').querySelector('video');
+  if (existingVideoElement) {
+      existingVideoElement.remove();
+  }
+  // Create a new video element
+  const videoElement = document.createElement('video');
+  videoElement.src = videoUrl;
+  videoElement.controls = true;
+  videoElement.width = 640;
+  videoElement.height = 360;
+  // Append the new video element to the container in the HTML document
+  document.getElementById('video-container').appendChild(videoElement);
+}
+function clearSelectedImages() {
+  selectedImagesArray.length = 0;
+  displaySelectedImages();
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/get_audio_files')
+  .then(response => response.json())
+  .then(audioFiles => {
+      const audioList = document.getElementById('audio-list');
+      console.log(audioFiles);
+      for (const filename in audioFiles) {
+          const audioData = audioFiles[filename];
+          const audioElement = `
+              <div class="audio-container">
+                  <p class="audio-name">${filename}</p>
+                  <audio controls>
+                      <source src="data:audio/mpeg;base64,${audioData}" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+              </div>
+          `;
+          audioList.innerHTML += audioElement;
+      }
+
+      // Add event listeners to audio file containers
+      const audioContainers = document.querySelectorAll('.audio-container');
+      audioContainers.forEach(audioContainer => {
+          audioContainer.addEventListener('click', function() {
+              // Remove selection from all other audio containers
+              audioContainers.forEach(container => {
+                  container.classList.remove('selected');
+              });
+
+              // Add selection to the clicked audio container
+              this.classList.add('selected');
+
+              // Retrieve selected audio file information
+              const selectedFileName = this.querySelector('.audio-name').textContent;
+              console.log('Selected audio file:', selectedFileName);
+              const selectedAudioData = audioFiles[selectedFileName];
+              fetch('/select_audio', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ 
+                      filename: selectedFileName,
+                      audioData: selectedAudioData  // Pass audio data along with the filename
+                  })
+              })
+              .then(response => {
+                  if (response.ok) {
+                      console.log('Audio file selected and stored successfully.');
+                  } else {
+                      throw new Error('Failed to select audio file.');
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+              });
+          });
+      });
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+});
+
+       
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+body
+{
+    margin: 0;
+    padding: 0;
+    border: border-box;
+    font-family: sans-serif;
+    background-color: rgb(47, 47, 71);
+}
+body 
+{
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn 
+{
+    to 
+    {
+        opacity: 1;
+    }
+}
+
+.login{
+    width: 500px;
+    height: 500px;
+    background: #474E68;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    padding: 70px 30px;
+
+}
+h2{
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+}
+label{
+    color: #f41c0c;
+    font-size: 17px;
+}
+#Uname,#email,#name{
+    width: 300px;
+    height: 40px;
+    border: none;
+    font-size: 20px;
+    font-style: italic;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
+#Pass,#confrm_Pass{
+    width: 300px;
+    height: 40px;
+    border: none;
+    font-size: 20px;
+    font-style: italic;
+    border-radius: 3px;
+    padding-left: 8px;
+
+}
+#log{
+    width: 300px;
+    height: 30px;
+    border: none;
+    font-size: 20px;
+    border-radius: 17px;
+    padding-left: 7px;
+    color: blue;
+}
+
+
+.login p{
+    color: white;
+    font-size: 17px;
+}
+
+.login a{
+    background-color: #CDFADB;
+    color: #FF8080;
+    padding: 9px 10px;
+    border-radius: 5px;
+    /* text-decoration: none; */
+    font-size: 17px;
+}
+/* a{
+    padding-left: 10px;
+    background-color: grey;
+    color: white;
+    text-decoration: none;
+} */

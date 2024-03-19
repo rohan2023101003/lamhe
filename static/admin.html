@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Responsive Admin Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Admin Portal</strong></li>
+        </ul>
+        <ul>
+            <li><a href="#">Settings</a></li>
+            <li><a href="login.html" role="button">Logout</a></li>
+        </ul>
+    </nav>
+    <main class="container">
+        <div class="grid">
+            <section>
+                <h1>Admin Portal</h1>
+                <div style="overflow-x:auto;">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="container">
+        <small>
+            <a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a>
+        </small>
+    </footer>
+    <script>
+        setTimeout(function(){
+            window.location.reload(1);}
+        , 2000);
+    </script>
+</body>
+</html>

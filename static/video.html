@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Enhanced Video Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .video-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        video {
+            width: 80%;
+            max-width: 600px;
+            height: auto;
+        }
+        .center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .center button, .center select, .center input[type="text"] {
+            margin: 5px;
+        }
+        nav {
+            display: flex;
+            justify-content: flex-start;
+            padding: 10px 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: inherit;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="container">
+        <a href="home.html">Home</a>
+    </nav>
+    <main class="container">
+        <div class="grid">
+            <img src="1.jpg" alt="Placeholder Image" >
+            <img src="3.jpg" alt="Placeholder Image">
+            <img src="4.jpg" alt="Placeholder Image">
+            <img src="5.jpg" alt="Placeholder Image">
+            <img src="6.webp" alt="Placeholder Image">
+            <img src="2.png" alt="Placeholder Image">
+        </div>
+        <div class="center">
+            <button>MP3 File Upload</button>
+            <input type="text" placeholder="Duration (seconds)">
+            <label for="video-resolution" style="margin-top: 10px;">Video Resolution</label>
+            <select id="video-resolution">
+                <option value="144">144p</option>
+                <option value="360">360p</option>
+                <option value="480">480p</option>
+                <option value="720">720p</option>
+                <option value="1080">1080p</option>
+            </select>
+        </div>
+        <div class="center">
+            <button onclick="alert('Create Video Feature Coming Soon!')">Create Video</button>
+        </div>
+        <div class="video-container">
+            <video controls>
+                <source src="video/output_video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </main>
+</body>
+</html>

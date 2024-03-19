@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Form</title>
+    <!-- Pico CSS for styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Additional styling can go here */
+        #loginMessage {
+            color: #f00; /* Red text for errors */
+            text-align: center;
+            margin-top: 20px;
+        }
+        body 
+        {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+    
+        @keyframes fadeIn 
+        {
+            to 
+            {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation bar -->
+<nav class="container-fluid">
+    <ul><li><strong> :) LAMHE </strong></li></ul>
+    <ul>
+        <li onclick="logout_with_delay();" class="logout-button"><a href="#">Home</a></li>
+    </ul>
+</nav>
+<!-- Main content area -->
+<main class="container">
+    <div class="grid">
+        <section>
+            <hgroup>
+                <h2>Login Page</h2>
+                <h3>Welcome Back!</h3>
+            </hgroup>
+            <!-- Login form -->
+            <form id="login"  action="/login" method="POST" style="max-width: 500px; margin: auto;">
+                <label for="Uname">Username</label>
+                <input type="text" id="Uname" name="Uname" placeholder="Enter your username" required class="fluid" />
+                <label for="Pass">Password</label>
+                <input type="Password" name="Pass" id="Pass" placeholder="Enter your password" required class="fluid" />
+                <button type="submit" name="log" id="log" class="primary">Log In</button>
+                <p>
+                    New to our page? <a href="register.html">Register</a>
+                </p>
+            </form>
+            <div id="loginMessage"></div>
+        </section>
+    </div>
+</main>
+<!-- Footer -->
+<footer class="container">
+    <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+</footer>
+<script>
+  
+    function logout_with_delay() {
+      var delayTime = 0; 
+      setTimeout(function() {
+          window.location.href = "index.html";
+      }, delayTime);
+  }
+</script>
+</body>
+</html>

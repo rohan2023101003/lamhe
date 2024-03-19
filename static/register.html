@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        body 
+    {
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
+    }
+    .error-message {
+        color: red;
+        text-align: center;
+    }
+
+    @keyframes fadeIn 
+    {
+        to 
+        {
+            opacity: 1;
+        }
+    }
+
+    </style>
+</head>
+<body>
+
+<nav class="container-fluid">
+    <ul><li><strong>:) LAMHE</strong></li></ul>
+    <ul>
+        <li onclick="logout_with_delay();" class="logout-button"><a href="#" role="button" >Home</a></li>
+    </ul>
+</nav>
+<main class="container">
+    <div class="grid">
+        <section>
+            <hgroup>
+                <h2>Registration Page</h2>
+                <h3>Create Your Account</h3>
+            </hgroup>
+            <form id="registration" method="post" action="/register" style="max-width: 500px; margin: auto;">
+                <input type="text" name="Uname" id="Uname" placeholder="Username" required class="fluid" />
+                <input type="Password" name="Pass" id="Pass" placeholder="Password" required class="fluid" />
+                <input type="Password" name="confrm_Pass" id="confrm_Pass" placeholder="Confirm Password" required class="fluid" />
+                <input type="text" name="name" id="name" placeholder="Name" required class="fluid" />
+                <input type="text" name="email" id="email" placeholder="Email" required class="fluid" />
+                <!-- <button type="submit" name="log" id="log" class="primary">Register</button> -->
+                <button type="submit">Register</button>
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </form>
+            <div class="error-message" id="error-message"></div>    
+        </section>
+    </div>
+</main>
+<footer class="container">
+    <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+</footer>
+</body>
+<script>
+    function logout_with_delay() {
+        var delayTime = 0; 
+        setTimeout(function() {
+            window.location.href = "index.html";
+        }, delayTime);
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("registration"); // Corrected form ID
+        form.addEventListener("submit", function(event) {
+            const password = document.getElementById("Pass").value; // Corrected ID
+            const confirmPassword = document.getElementById("confrm_Pass").value; // Corrected ID
+            if (password !== confirmPassword) {
+                event.preventDefault(); // Prevent form submission
+                alert("Passwords do not match. Please try again.");
+            }
+        });
+    });
+    
+        
+    
+</script>
+</html>

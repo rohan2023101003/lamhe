@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Success</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c34; /* Dark background for contrast */
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+        .success_message {
+            text-align: center;
+            animation: fadeIn 2s;
+        }
+        h1 {
+            font-size: 2em;
+            background: -webkit-linear-gradient(45deg, #ff6a00, #ee0979);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <script>
+        setTimeout(function() {
+            window.location.href = 'register.html';
+        }, 3500);
+    </script>
+</head>
+<body>
+    <div class="success_message">
+        <h1>Registration Successful!</h1>
+    </div>
+</body>
+</html>
