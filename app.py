@@ -1,14 +1,13 @@
 # Import necessary modules
 import os
 from flask import Flask, request, render_template, redirect, send_from_directory,session,jsonify,send_file,url_for
-import pymysql
 import pickle
 import io
 from io import BytesIO
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from PIL import Image
-from moviepy.editor import concatenate_audioclips, VideoFileClip , ImageClip ,concatenate_videoclips
+from PIL import Image, ImageOps
+from moviepy.editor import ImageSequenceClip, concatenate_videoclips ,concatenate_audioclips,VideoFileClip,ImageClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip ,AudioClip
 import shutil
 import cv2
@@ -17,10 +16,8 @@ import base64
 import urllib.parse
 import time
 import psycopg2
-import subprocess
-import glob
-from datetime import datetime
-from moviepy.video import fx
+import requests
+from multiprocessing import Pool
 
 # Initialize Flask app
 app = Flask(__name__, static_url_path='', static_folder='static', template_folder='static')
@@ -38,52 +35,59 @@ jwt = JWTManager(app)
 # Ensure the upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database configuration
-# db_config = {
-#     "host": "localhost",    
-#     "user": "rohan",
-#     "password": "@0NKmF710",
-#     "db": "lamhe",
-# }
-
-
-
-# # Establish database connection
-# def get_db_connection():
-#     return pymysql.connect(cursorclass=pymysql.cursors.DictCursor, **db_config)
+# db connection for render
 def get_db_connection():
-    conn = psycopg2.connect("postgresql://rohan:YyoarUCSnxqRTxK5sJdLZg@jhag21615v-8917.8nk.gcp-asia-southeast1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full")
-    # print("DATABASE_URL: ", os.environ["DATABASE_URL"])
+    # Decode the base64 certificate
+    cert_decoded = base64.b64decode(os.environ['ROOT_CERT_BASE64'])
+    
+    # Define the path to save the certificate
+    cert_path = '/opt/render/.postgresql/root.crt'
+    os.makedirs(os.path.dirname(cert_path), exist_ok=True)
+    
+    # Write the certificate to the file
+    with open(cert_path, 'wb') as cert_file:
+        cert_file.write(cert_decoded)
+    
+    # Set up the connection string with the path to the certificate
+    conn = psycopg2.connect(
+        "host=stream-strider-4060.7s5.aws-ap-south-1.cockroachlabs.cloud "
+        "port=26257 dbname=defaultdb user=rohan "
+        "password=YyoarUCSnxqRTxK5sJdLZg sslmode=verify-full "
+        f"sslrootcert={cert_path}"
+    )
     return conn
+
+# #db connection for local host
+# def get_db_connection():
+#     conn = psycopg2.connect("postgresql://rohan:YyoarUCSnxqRTxK5sJdLZg@jhag21615v-8917.8nk.gcp-asia-southeast1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full")
+#     # print("DATABASE_URL: ", os.environ["DATABASE_URL"])
+#     return conn
 
 # Initialize database
 def init_db():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-       
+
         # Create User_Details table
         cursor.execute("""
-          CREATE TABLE IF NOT EXISTS users (
-        id INT8 NOT NULL DEFAULT unique_rowid(),
-        username VARCHAR(255) NULL,
-        name VARCHAR(255) NULL,
-        email VARCHAR(255) NULL,
-        password VARCHAR(255) NULL,
-        CONSTRAINT users_pkey PRIMARY KEY (id ASC),
-        UNIQUE INDEX users_username_key (username ASC)
-        );
+            CREATE TABLE IF NOT EXISTS users (
+                id INT  PRIMARY KEY,
+                username VARCHAR(255) UNIQUE,
+                name VARCHAR(255),
+                email VARCHAR(255),
+                password VARCHAR(255)
+            )
         """)
 
         # Create Images table
         cursor.execute("""CREATE TABLE IF NOT EXISTS image_details (
-        image_id INT8 NOT NULL DEFAULT unique_rowid(),
-        username VARCHAR(255) NULL,
-        name VARCHAR(500) NOT NULL,
-        size INT8 NOT NULL,
-        extension VARCHAR(100) NULL,
-        img BYTES NULL,
-        CONSTRAINT image_details_pkey PRIMARY KEY (image_id ASC)
+            image_id INT PRIMARY KEY NOT NULL ,
+            username VARCHAR(255) ,
+            name VARCHAR(500) NOT NULL,
+            size INT NOT NULL,
+            extension VARCHAR(100),
+            img BYTEA
         );
         """)
 
@@ -106,9 +110,7 @@ def index():
 
 
 
-# Your login route
-from werkzeug.security import generate_password_hash, check_password_hash
-
+# Route to register a new user
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
@@ -145,7 +147,8 @@ def register():
 
         except Exception as e:
             return f"An error occurred: {e}", 500
-
+        
+        
 @app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
@@ -159,7 +162,17 @@ def login():
                 cursor = connection.cursor()
 
                 cursor.execute("SELECT id, username, name, email FROM users")
-                users = cursor.fetchall()
+                rows = cursor.fetchall()
+
+                users = []
+                for row in rows:
+                    user = {
+                        'id': row[0],
+                        'username': row[1],
+                        'name': row[2],
+                        'email': row[3]
+                    }
+                users.append(user)
 
                 cursor.close()
                 connection.close()
@@ -373,7 +386,11 @@ def upload_selected_images():
         with open(image_path, 'wb') as f:
             f.write(image_data)
         uploaded_files.append(image_name)
+
     return jsonify({'message': 'Images uploaded successfully', 'files': uploaded_files}), 200
+
+
+
 
 
 
@@ -386,10 +403,10 @@ def video(image_folder='selected-images', audio_folder='selected-audio'):
     video_folder = os.path.join('static', 'video')
     if os.path.exists(video_folder):
         shutil.rmtree(video_folder)
-    os.makedirs(video_folder)
+    os.makedirs(video_folder,exist_ok=True)
 
     # Ensure all images are the same size or adjust the size here
-    frame_size = (1920, 1520)  # Example frame size, adjust to match your images
+    frame_size = (1920,1520)  # Example frame size, adjust to match your images
 
     # Calculate frame rate to show each image for 3 seconds
     image_duration = 3  # Duration each image should be shown (in seconds)
@@ -402,19 +419,28 @@ def video(image_folder='selected-images', audio_folder='selected-audio'):
     # Get list of image files from image_folder
     image_files = [os.path.join(image_folder, file) for file in os.listdir(image_folder) if file.endswith(('.jpg', '.png', '.jpeg'))]
 
+    # Clear images from selected-images folder
+
+
     # List to hold video clips for each image
     video_clips = []
 
     for image_path in image_files:
         # Read each image
         img = cv2.imread(image_path)
+        # Check if the image is loaded successfully
+        if img is None:
+            # Print a warning message and skip to the next image
+            print(f"Warning: Unable to read image file '{image_path}'")
+            continue
         # Convert image from BGR to RGB
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # Resize image to match frame size if necessary
         img_resized = cv2.resize(img_rgb, frame_size)
         # Create video clip for the image for the duration of image_duration
         video_clips.append(ImageClip(img_resized).set_duration(image_duration))
-
+    shutil.rmtree(image_folder)
+    os.makedirs(image_folder)
     # Concatenate all video clips into one
     final_video_clip = concatenate_videoclips(video_clips, method="compose")
 
@@ -423,7 +449,13 @@ def video(image_folder='selected-images', audio_folder='selected-audio'):
 
     # Get audio file path
     audio_file = os.path.join(audio_folder, os.listdir(audio_folder)[0])  # Assuming only one audio file
+
+    # Clear audio files from selected-audio folder
+
+
     audio_clip = AudioFileClip(audio_file)
+    shutil.rmtree(audio_folder)
+    os.makedirs(audio_folder)
 
     # Check video duration
     video_duration = final_video_clip.duration
@@ -447,26 +479,7 @@ def video(image_folder='selected-images', audio_folder='selected-audio'):
     final_output_filename = 'output_video_{}.mp4'.format(current_time)
     final_video_clip.write_videofile(os.path.join(video_folder, final_output_filename), codec='libx264', audio_codec='aac')
 
-    # Clear images from selected-images folder
-    shutil.rmtree(image_folder)
-    os.makedirs(image_folder)
-
     return jsonify({'video_url': url_for('static', filename=os.path.join('video', final_output_filename)), 'message': 'Video created successfully!'})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -516,6 +529,34 @@ def select_audio():
         file.write(audio_data)
 
     return 'Audio file selected and stored successfully.', 200
+
+
+@app.route('/download_video', methods=['POST'])
+def download_video():
+    quality = request.form.get('quality')
+    video_url = request.form.get('video_url')
+    video_filename = video_url.split('/')[-1]
+    video_path = os.path.join(app.static_folder, 'video', video_filename)
+    output_path = os.path.join(app.static_folder, 'video', f'processed_{video_filename[:-4]}_{quality}.mp4')
+
+    try:
+        clip = VideoFileClip(video_path)
+        resolutions = {
+            '360px': (640, 360, '500k'),
+            '720px': (1280, 720, '1500k'),
+            '1080px': (1920, 1080, '2500k'),
+        }
+        width, height, bitrate = resolutions.get(quality, (*clip.size, '2500k'))
+        resized_clip = clip.resize(newsize=(width, height))
+        resized_clip.write_videofile(output_path, codec='libx264', bitrate=bitrate, temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+    except Exception as e:
+        print(f"An error occurred during video processing: {e}")
+        return jsonify({'error': f'Error processing video: {str(e)}'}), 500
+
+    if os.path.isfile(output_path):
+        return send_from_directory(os.path.dirname(output_path), os.path.basename(output_path), as_attachment=True)
+    else:
+        return jsonify({'error': 'Processed video file not found'}), 404
 
 
 if __name__ == '__main__':
